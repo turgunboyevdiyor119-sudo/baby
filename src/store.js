@@ -1,5 +1,5 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_URL = isLocal ? 'http://127.0.0.1:3000/api' : 'https://baby-backend.onrender.com/api'; // O'zingizning Render URL ni bu erga yozing
+const API_URL = isLocal ? 'http://127.0.0.1:3000/api' : 'https://baby-negd.onrender.com/api';
 
 // ── Date helpers ───────────────────────────────────────────────────────────
 export function formatDate(date) {
