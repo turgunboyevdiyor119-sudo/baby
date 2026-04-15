@@ -77,6 +77,14 @@ export async function deleteWorker(id) {
   await fetch(`${API_URL}/workers/${id}`, { method: 'DELETE' });
 }
 
+export async function updateWorker(id, data) {
+  await fetch(`${API_URL}/workers/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+}
+
 export async function setWorkerStatus(id, status) {
   await fetch(`${API_URL}/workers/${id}/status`, {
     method: 'PUT',

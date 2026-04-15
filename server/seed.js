@@ -4,14 +4,14 @@ function seed() {
   console.log('Seeding database...');
   
   // Clear existing
-  db.prepare('DELETE FROM users').run();
-  db.prepare('DELETE FROM time_slots').run();
   db.prepare('DELETE FROM bookings').run();
+  db.prepare('DELETE FROM time_slots').run();
+  db.prepare('DELETE FROM users').run();
 
   // Add Admin
   db.prepare(`
     INSERT INTO users (name, username, password, role)
-    VALUES ('Admin', 'admin', 'admin123', 'admin')
+    VALUES ('Diyor', 'diyor', 'diyor19912012', 'admin')
   `).run();
 
   // Initial Workers

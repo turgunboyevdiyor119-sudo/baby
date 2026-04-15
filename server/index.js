@@ -69,6 +69,18 @@ app.post('/api/workers', (req, res) => {
   }
 });
 
+app.put('/api/workers/:id', (req, res) => {
+  const { name, username, password, experience } = req.body;
+  if (password) {
+    db.prepare('UPDATE users SET name = ?, username = ?, password = ?, experience = ? WHERE id = ?')
+      .run(name, username, password, experience, req.params.id);
+  } else {
+    db.prepare('UPDATE users SET name = ?, username = ?, experience = ? WHERE id = ?')
+      .run(name, username, experience, req.params.id);
+  }
+  res.json({ success: true });
+});
+
 app.delete('/api/workers/:id', (req, res) => {
   db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
   db.prepare('DELETE FROM time_slots WHERE workerId = ?').run(req.params.id);

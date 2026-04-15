@@ -2,7 +2,7 @@ import { translations } from './translations.js';
 import {
   getWorkers, getBookings,
   getCurrentUser, setCurrentUser, login, addBooking,
-  getCourseEndDate, getCourseRemaining, createWorker, createClient, formatDate
+  getCourseEndDate, getCourseRemaining, createWorker, updateWorker, deleteWorker, createClient, formatDate, setWorkerStatus
 } from './store.js';
 
 // ── state ──────────────────────────────────────────────────────────────────
@@ -1056,9 +1056,7 @@ function bindEvents() {
     if (!name || !username) return;
 
     if (adminEditId) {
-       // Edit logic omitted for brevity or implemented in backend via POST/PUT
-       // For now, let's keep it simple as the prompt asked for "backend and admin panel"
-       // I'll leave this as a TODO or implement a simple update
+      await updateWorker(adminEditId, { name, username, password, experience });
     } else {
       if (!password) { alert('Parolni kiriting'); return; }
       await createWorker({ name, username, password, experience });
