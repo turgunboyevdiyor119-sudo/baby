@@ -82,8 +82,10 @@ app.put('/api/workers/:id', (req, res) => {
 });
 
 app.delete('/api/workers/:id', (req, res) => {
-  db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
-  db.prepare('DELETE FROM time_slots WHERE workerId = ?').run(req.params.id);
+  const workerId = req.params.id;
+  db.prepare('DELETE FROM bookings WHERE workerId = ?').run(workerId);
+  db.prepare('DELETE FROM time_slots WHERE workerId = ?').run(workerId);
+  db.prepare('DELETE FROM users WHERE id = ?').run(workerId);
   res.json({ success: true });
 });
 
