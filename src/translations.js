@@ -10,7 +10,7 @@ export const translations = {
     nav_login: "Kirish / Ro'yxatdan o'tish",
     nav_logout: "Chiqish",
     nav_profile: "Profil",
-    
+
     // Auth
     auth_login_tab: "Kirish",
     auth_register_tab: "Ro'yxatdan o'tish",

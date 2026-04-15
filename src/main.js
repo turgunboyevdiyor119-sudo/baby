@@ -435,11 +435,6 @@ function renderLoginPage() {
         </div>
         <button class="btn-primary btn-full" id="registerBtn">${t('auth_register_btn')}</button>
       `}
-
-      ${authTab === 'login' ? `
-      <div class="login-hints" style="margin-top:1rem; font-size:0.8rem; color:#666">
-        <p>Admin: admin / admin123 | Shahnoza: shahnoza / shahnoza123</p>
-      </div>` : ''}
     </div>
   </div>`;
 }
