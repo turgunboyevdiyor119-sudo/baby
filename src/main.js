@@ -1,6 +1,6 @@
 import { translations } from './translations.js';
 import {
-  getWorkers, saveWorkers, getBookings,
+  getWorkers, getBookings,
   getCurrentUser, setCurrentUser, login, addBooking,
   getCourseEndDate, getCourseRemaining, createWorker, createClient, formatDate
 } from './store.js';
@@ -76,7 +76,7 @@ function renderNavbar() {
 }
 
 // ── HOME ────────────────────────────────────────────────────────────────────
-function renderHome() {
+async function renderHome() {
   return `
   <section class="hero" id="home">
     <div class="hero-bg">
@@ -114,7 +114,7 @@ function renderHome() {
     </div>
     <div class="hero-image animate-slide-in">
       <div class="hero-img-frame">
-        <img src="/hero_massage.png" alt="Massaj markazi" />
+        <img src="./hero_massage.png" alt="Massaj markazi" />
         <div class="hero-img-badge">
           <span>✓</span> Sertifikatlangan
         </div>
@@ -132,7 +132,7 @@ function renderHome() {
       <div class="services-grid">
         <div class="service-card animate-card">
           <div class="service-img-wrap">
-            <img src="/baby_massage.png" alt="Baby massage" class="service-img"/>
+            <img src="./baby_massage.png" alt="Baby massage" class="service-img"/>
             <div class="service-img-overlay"><span>👶</span></div>
           </div>
           <div class="service-body">
@@ -147,7 +147,7 @@ function renderHome() {
         </div>
         <div class="service-card animate-card">
           <div class="service-img-wrap">
-            <img src="/women_massage.png" alt="Women massage" class="service-img"/>
+            <img src="./women_massage.png" alt="Women massage" class="service-img"/>
             <div class="service-img-overlay"><span>🌸</span></div>
           </div>
           <div class="service-body">
@@ -758,7 +758,7 @@ async function render() {
 
   try {
     if (page === 'home' || page === 'services' || page === 'prices') {
-      content = renderHome();
+      content = await renderHome();
     } else if (page === 'staff') {
       content = await renderStaffPage();
     } else if (page === 'booking') {
@@ -958,35 +958,27 @@ function bindEvents() {
     const file = this.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
-      const workers = getWorkers();
-      const idx = workers.findIndex(w => w.id === currentUser.id);
-      if (idx !== -1) {
-        workers[idx].photo = e.target.result;
-        saveWorkers(workers);
-        currentUser = { ...currentUser, photo: e.target.result };
-        setCurrentUser(currentUser);
-        render();
-      }
+    reader.onload = async (e) => {
+      currentUser = { ...currentUser, photo: e.target.result };
+      setCurrentUser(currentUser);
+      // For now, photo saving to real DB is skipped to avoid huge Base64 strings in SQLite
+      // until we have proper file storage, but we keep it in session.
+      await render();
     };
     reader.readAsDataURL(file);
   });
 
   // Profile: save
-  document.getElementById('saveProfileBtn')?.addEventListener('click', () => {
+  document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('profileName')?.value.trim();
     const exp = parseInt(document.getElementById('profileExp')?.value);
-    const workers = getWorkers();
-    const idx = workers.findIndex(w => w.id === currentUser.id);
-    if (idx !== -1) {
-      workers[idx].name = name;
-      workers[idx].experience = exp;
-      saveWorkers(workers);
-      currentUser = { ...currentUser, name, experience: exp };
-      setCurrentUser(currentUser);
-      document.getElementById('profileSaved')?.classList.remove('hidden');
-      setTimeout(() => document.getElementById('profileSaved')?.classList.add('hidden'), 2000);
-    }
+    
+    // In a real app, we'd call an API here. For now, update locally in session.
+    currentUser = { ...currentUser, name, experience: exp };
+    setCurrentUser(currentUser);
+    document.getElementById('profileSaved')?.classList.remove('hidden');
+    setTimeout(() => document.getElementById('profileSaved')?.classList.add('hidden'), 2000);
+    await render();
   });
 
   // Profile: status toggle
