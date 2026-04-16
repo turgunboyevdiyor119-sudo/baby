@@ -101,6 +101,21 @@ app.get('/api/bookings', (req, res) => {
   res.json(bookings);
 });
 
+app.post('/api/bookings/transfer', (req, res) => {
+  const { fromWorkerId, toWorkerId } = req.body;
+  const toWorker = db.prepare('SELECT name FROM users WHERE id = ?').get(toWorkerId);
+  const today = new Date().toISOString().split('T')[0];
+  
+  if (!toWorker) return res.status(400).json({ error: 'Worker topilmadi' });
+
+  // Update time slots
+  db.prepare("UPDATE time_slots SET workerId = ? WHERE workerId = ? AND date >= ? AND booked = 1").run(toWorkerId, fromWorkerId, today);
+  // Update bookings
+  db.prepare("UPDATE bookings SET workerId = ?, workerName = ? WHERE workerId = ? AND date >= ?").run(toWorkerId, toWorker.name, fromWorkerId, today);
+
+  res.json({ success: true });
+});
+
 app.post('/api/bookings', (req, res) => {
   const { workerId, clientName, clientPhone, date, time, slotId } = req.body;
   const worker = db.prepare('SELECT name FROM users WHERE id = ?').get(workerId);

@@ -1,7 +1,7 @@
 import { translations } from './translations.js';
 import {
   getWorkers, getBookings,
-  getCurrentUser, setCurrentUser, login, addBooking,
+  getCurrentUser, setCurrentUser, login, addBooking, transferBookings,
   getCourseEndDate, getCourseRemaining, createWorker, updateWorker, deleteWorker, createClient, formatDate, setWorkerStatus
 } from './store.js';
 
@@ -692,6 +692,7 @@ async function renderAdminPage() {
                   <button class="status-btn-sm ${w.status === 'free' ? 'active-free' : ''}" data-set-status="${w.id}" data-status="free">${t('free')}</button>
                   <button class="status-btn-sm ${w.status === 'busy' ? 'active-busy' : ''}" data-set-status="${w.id}" data-status="busy">${t('busy')}</button>
                 </div>
+                <button class="btn-edit" data-transfer-worker="${w.id}">🔀 O'tkazish</button>
                 <button class="btn-edit" data-edit-worker="${w.id}">✎ ${t('admin_edit')}</button>
                 <button class="btn-delete" data-delete-worker="${w.id}">🗑 ${t('admin_delete')}</button>
               </div>
@@ -1092,6 +1093,20 @@ function bindEvents() {
       const status = el.dataset.status;
       await setWorkerStatus(id, status);
       await render();
+    });
+  });
+
+  // Admin: transfer bookings
+  document.querySelectorAll('[data-transfer-worker]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const fromId = parseInt(e.target.dataset.transferWorker);
+      const workersList = await getWorkers();
+      const options = workersList.filter(w => w.id !== fromId).map(w => `${w.id}: ${w.name}`).join('\\n');
+      const targetId = prompt(`Mijozlarni kimga o'tkazmoqchisiz? Quyidagilardan birortasining ID raqamini kiriting:\\n\\n${options}`);
+      if(targetId && !isNaN(parseInt(targetId))) {
+        await transferBookings(fromId, parseInt(targetId));
+        await render();
+      }
     });
   });
 }

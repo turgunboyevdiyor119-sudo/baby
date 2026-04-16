@@ -108,6 +108,15 @@ export async function addBooking(booking) {
   return res.json();
 }
 
+export async function transferBookings(fromWorkerId, toWorkerId) {
+  const res = await fetch(`${API_URL}/bookings/transfer`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fromWorkerId, toWorkerId })
+  });
+  return res.json();
+}
+
 export async function addSlot(workerId, date, time) {
   await fetch(`${API_URL}/slots`, {
     method: 'POST',
